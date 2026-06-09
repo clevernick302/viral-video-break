@@ -2,16 +2,74 @@
 
 `viral-video-breakdown` is a Codex skill for reverse-engineering viral short-form videos.
 
-Give it an Instagram Reel, TikTok, YouTube Short, X video, or local MP4, and it helps turn the video into a structured creative breakdown:
+The core of this skill is not "download a video." The core is turning a request like:
 
-- why the video likely worked
-- what happens in the first 3 seconds
-- how the timeline creates retention
-- what emotional triggers are being used
-- why viewers would like, save, share, comment, or rewatch
-- how to extract a reusable formula for another niche
+```text
+Break down this viral video:
+https://www.instagram.com/reel/xxxxx/
+```
 
-It is designed for creators, marketers, editors, growth teams, and AI agents that need to study viral videos instead of just describing them.
+into a repeatable analysis workflow that explains why the video worked and how the structure can be reused.
+
+It supports Instagram Reels, TikTok, YouTube Shorts, X videos, or uploaded local MP4/MOV/WebM files.
+
+## Who This Is For
+
+This skill is designed for:
+
+- creators studying viral videos
+- editors analyzing pacing and hooks
+- marketers reverse-engineering short-form ads
+- growth teams building repeatable content formats
+- AI agents that need a stable viral-video analysis workflow
+
+## Input
+
+The user can provide:
+
+```text
+Break down this viral video: https://www.instagram.com/reel/xxxxx/
+```
+
+Optional context improves the output:
+
+```text
+My niche: AI tools / fitness / beauty / local services
+My goal: remix topics / study editing / rewrite the script / generate similar videos
+```
+
+If a public link cannot be accessed, the user can provide:
+
+- an uploaded MP4
+- screenshots
+- caption text
+- visible metrics
+- transcript
+- comments
+
+For Instagram, prefer public information or uploaded media. Do not require credentials.
+
+## Fixed Output Contract
+
+Every full breakdown should produce six things:
+
+1. **Viral verdict**: why the video qualifies as viral or outlier content.
+2. **Timeline breakdown**: what happens every 1-3 seconds.
+3. **Hook analysis**: how the first 3 seconds stop the scroll.
+4. **Retention mechanism**: why viewers continue through the middle.
+5. **Emotional and propagation logic**: why viewers like, comment, save, share, or rewatch.
+6. **Reusable formula**: how to adapt the structure to the user's niche.
+
+The underlying creative equation is:
+
+```text
+Viral video = topic momentum
+  x first-3-second stop power
+  x middle retention
+  x emotional intensity
+  x propagation reason
+  x reusable structure
+```
 
 ## What This Skill Does
 
@@ -34,6 +92,70 @@ The skill separates a viral video into three layers:
    - Convert the specific video into a repeatable structure
    - Generate remix ideas for the user's niche
    - Separate like/save/share mechanics from comment mechanics
+
+## Skill Workflow
+
+### Step 1. Get The Source Material
+
+- If the user provides a public video link, try to inspect public metadata such as title, caption, comments, views, likes, and creator context.
+- If the link cannot be accessed, ask for an uploaded MP4, screenshots, visible metrics, transcript, or caption.
+- For Instagram, prefer public information and uploaded media.
+
+### Step 2. Convert Video To Text
+
+- Extract spoken-word transcription.
+- Extract visible subtitles or on-screen text when available.
+- Organize speech and text into a timestamped script.
+
+### Step 3. Extract Keyframes
+
+- Capture one frame every 1-3 seconds.
+- Mark the visual subject, action, camera movement, subtitle, scene change, and transition.
+- Use the frames to avoid analyzing only the transcript.
+
+### Step 4. Analyze The Timeline
+
+- `0-3s`: hook, first frame, first sentence, pattern interrupt.
+- `3-10s`: promise, conflict, problem setup, relevance confirmation.
+- `middle`: information progression, proof, surprise, escalation, or transformation.
+- `ending`: CTA, payoff, suspense, loop, rewatch trigger, or follow-up hook.
+
+### Step 5. Analyze Viewer Psychology
+
+Identify which psychological drivers are doing the work:
+
+- curiosity
+- anxiety
+- payoff anticipation
+- identity recognition
+- practical value
+- conflict
+- aspiration
+- humor
+- relief
+- social currency
+
+Then answer:
+
+- Why would viewers continue watching?
+- Why would viewers interact?
+- Why would viewers save or share?
+- Why might viewers watch but not comment?
+
+### Step 6. Extract The Remix Template
+
+- Abstract the specific video into a structural formula.
+- Generate 3-10 topic adaptations for the user's niche.
+- Provide hook rewrites or opening script options when useful.
+
+The final target sentence is:
+
+```text
+This video works because it uses [X] to stop [target viewer],
+creates [Y] unfinished tension in the first 3 seconds,
+sustains attention through [Z],
+and ends with [W] to trigger save/share/comment/follow behavior.
+```
 
 ## Example Use Cases
 
@@ -60,17 +182,17 @@ Why did this video work for a 2,000-follower creator, and how can I remix the st
 
 ```text
 viral-video-breakdown-repo/
-├── README.md
-├── requirements.txt
-├── .gitignore
-└── viral-video-breakdown/
-    ├── SKILL.md
-    ├── agents/
-    │   └── openai.yaml
-    ├── references/
-    │   └── breakdown-framework.md
-    └── scripts/
-        └── extract_video_beats.py
+|-- README.md
+|-- requirements.txt
+|-- .gitignore
+`-- viral-video-breakdown/
+    |-- SKILL.md
+    |-- agents/
+    |   `-- openai.yaml
+    |-- references/
+    |   `-- breakdown-framework.md
+    `-- scripts/
+        `-- extract_video_beats.py
 ```
 
 The actual Codex skill lives in `viral-video-breakdown/`.
@@ -144,15 +266,15 @@ The extractor writes:
 
 ```text
 work/video-beats/
-├── manifest.json
-├── beats.md
-├── source.mp4
-├── audio.wav
-├── transcript.txt
-└── frames/
-    ├── frame_0001.jpg
-    ├── frame_0002.jpg
-    └── ...
+|-- manifest.json
+|-- beats.md
+|-- source.mp4
+|-- audio.wav
+|-- transcript.txt
+`-- frames/
+    |-- frame_0001.jpg
+    |-- frame_0002.jpg
+    `-- ...
 ```
 
 Key files:
@@ -185,17 +307,6 @@ Some platforms may still block downloads, require login, or restrict regions. In
 
 ## Breakdown Framework
 
-The skill uses this core equation:
-
-```text
-Viral potential = topic demand
-  x first-3-second stop power
-  x retention structure
-  x emotional intensity
-  x propagation reason
-  x remixability
-```
-
 The default analysis output includes:
 
 ```text
@@ -216,6 +327,72 @@ This video works because it uses [hook] to stop [viewer],
 creates [curiosity/tension],
 sustains attention through [retention mechanism],
 and triggers [engagement behavior].
+```
+
+## Hook, Retention, And Propagation Taxonomy
+
+Common hook types:
+
+- contrarian insight
+- result first
+- mistake warning
+- secret reveal
+- identity callout
+- strong conflict
+- before/after contrast
+- challenge or experiment
+- failure breakdown
+- money, beauty, fitness, speed, or status gain
+
+Common retention mechanisms:
+
+- open loop
+- step-by-step progression
+- escalating proof
+- delayed payoff
+- pattern interrupt
+- visual reset
+- curiosity stacking
+- emotional reversal
+
+Common propagation mechanisms:
+
+- saveable utility
+- debate trigger
+- share-with-a-friend relevance
+- identity expression
+- social currency
+- strong resonance
+
+## Minimum Viable Version
+
+The first usable version of this skill does not need perfect automation.
+
+It can work as:
+
+```text
+User provides link, screenshot, transcript, or MP4
+-> Codex extracts visible information
+-> Codex applies the breakdown framework
+-> Codex outputs hook, timeline, retention, emotion, propagation, and remix formula
+```
+
+Automation improves speed and consistency, but the value of the skill is the analysis frame.
+
+Use `scripts/extract_video_beats.py` when raw media extraction is useful:
+
+1. Download public media with `yt-dlp`.
+2. Extract frames with `ffmpeg`.
+3. Extract audio and transcribe with Whisper.
+4. Output `frames + transcript + metadata` for analysis.
+
+Always keep a fallback path:
+
+```text
+If the link cannot be accessed:
+1. Ask for an uploaded MP4.
+2. Or ask for screenshots + caption + visible metrics.
+3. Or do a lightweight breakdown from public page information only.
 ```
 
 ## Example Analysis Pattern
